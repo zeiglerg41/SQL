@@ -1,0 +1,25 @@
+/* Initialize a datatbase by creating a table for the inventory of a hypothetical bike shop */
+CREATE TABLE bike_shop (id INTEGER PRIMARY KEY, product TEXT, price INTEGER, quantity INTEGER, brand TEXT);
+
+/* Specify the (primary key for unique ID of the items, the products, price, quantity, and brand) */
+INSERT INTO bike_shop VALUES (1, "Chainbreaker + tire lever kit", 139.95, 4, "Wolf Tooth");
+INSERT INTO bike_shop VALUES (2, "Dry Lube", 11.99, 7, "WD-40");
+INSERT INTO bike_shop VALUES (3, "8-bit Plyers", 69.99, 4, "Wolf Tooth");
+INSERT INTO bike_shop VALUES (4, "Tire Sealant Injector", 8.97, 5, "Stan's No Tubes");
+INSERT INTO bike_shop VALUES (5, "T-Ratchet + Ti-Torque Kit", 112.39, 4, "Silca");
+INSERT INTO bike_shop VALUES (6, "Core remover tool", 8.49, 6, "Stan's No Tubes");
+INSERT INTO bike_shop VALUES (7, "Wet Lube", 25.00, 8, "Silca");
+INSERT INTO bike_shop VALUES (8, "Pro Bleed kit", 98.99, 4, "SRAM");
+INSERT INTO bike_shop VALUES (9, "Bleed Kit", 50.00, 4, "RockShox");
+INSERT INTO bike_shop VALUES (10, "Hex Wrench", 13.95, 4, "Park Tool");
+INSERT INTO bike_shop VALUES (11, "Hex Wrench Set", 35.55, 4, "Pedro's");
+INSERT INTO bike_shop VALUES (12, "Bottom Bracket Tool", 23.99, 5, "Park Tool");
+INSERT INTO bike_shop VALUES (13, "Cassette Lock Ring Tool", 8.95, 8, "Park Tool");
+INSERT INTO bike_shop VALUES (14, "Brush Kit", 27.99, 2, "Pedro's");
+INSERT INTO bike_shop VALUES (15, "Adjusting Cap tool", 16.95, 6, "Park Tool");
+
+/* Select and display only products from "Park Tool" */
+SELECT SUM(price) FROM bike_shop WHERE brand = "Park Tool";
+
+/* Display the entire dataset in this database, but ordered by brand */
+SELECT * FROM bike_shop ORDER BY brand;

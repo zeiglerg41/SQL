@@ -1,0 +1,83 @@
+/* Create table about the people and what they do here */
+CREATE TABLE stars (id INTEGER PRIMARY KEY,
+    first_name TEXT,
+    last_name TEXT,
+    STARmeter TEXT,
+    birthdate TEXT,
+    following_id INTEGER);
+
+INSERT INTO stars (first_name, last_name, STARmeter, birthdate, following_id)
+    VALUES ("Antonio", "Banderas", "228", "1960-08-10", 5);
+INSERT INTO stars (first_name, last_name, STARmeter, birthdate, following_id)
+    VALUES ("Leonardo", "DiCaprio", "38", "1974-11-11", 6);
+INSERT INTO stars (first_name, last_name, STARmeter, birthdate, following_id)
+    VALUES ("Adam", "Driver", "14", "1983-11-19", 2);
+INSERT INTO stars (first_name, last_name, STARmeter, birthdate, following_id)
+    VALUES ("Joaquin", "Phoenix", "10", "1974-10-28", 2);
+INSERT INTO stars (first_name, last_name, STARmeter, birthdate, following_id)
+    VALUES ("Jonathan", "Pryce", "179", "1947-06-01", 9);
+INSERT INTO stars (first_name, last_name, STARmeter, birthdate, following_id)
+    VALUES ("Tom", "Hanks", "58", "1956-07-09", 4);
+INSERT INTO stars (first_name, last_name, STARmeter, birthdate, following_id)
+    VALUES ("Anthony", "Hopkins", "317", "1937-12-31", 4);
+INSERT INTO stars (first_name, last_name, STARmeter, birthdate, following_id)
+    VALUES ("Al", "Pacino", "123", "1940-04-25", 10);
+INSERT INTO stars (first_name, last_name, STARmeter, birthdate, following_id)
+    VALUES ("Joe", "Pesci", "178", "1943-02-09", 8);
+INSERT INTO stars (first_name, last_name, STARmeter, birthdate, following_id)
+    VALUES ("Brad", "Pitt", "37", "1963-12-18", 7);
+
+
+CREATE TABLE leading_role (id INTEGER PRIMARY KEY,
+    stars_id INTEGER,
+    movie TEXT,
+    rating INTEGER);
+
+INSERT INTO leading_role (stars_id, movie, rating)
+    VALUES (4, "Joker", 8.6);
+INSERT INTO leading_role (stars_id, movie, rating)
+    VALUES (3, "Marriage Story", 8.1);
+INSERT INTO leading_role (stars_id, movie, rating)
+    VALUES (2, "Once Upon a Time... in Hollywood", 7.8);
+INSERT INTO leading_role (stars_id, movie, rating)
+    VALUES (1, "Pain and Glory", 7.6);
+INSERT INTO leading_role (stars_id, movie, rating)
+    VALUES (5, "The Two Popes", 7.6);
+
+
+CREATE TABLE supporting_role (id INTEGER PRIMARY KEY,
+    stars_id INTEGER,
+    movie TEXT,
+    rating INTEGER);
+
+INSERT INTO supporting_role (stars_id, movie, rating)
+    VALUES (9, "The Irishman", 8.0);
+INSERT INTO supporting_role (stars_id, movie, rating)
+    VALUES (8, "The Irishman", 8.0);
+INSERT INTO supporting_role (stars_id, movie, rating)
+    VALUES (10, "Once Upon a Time... in Hollywood", 7.8);
+INSERT INTO supporting_role (stars_id, movie, rating)
+    VALUES (6, "A Beautiful Day in the Neighborhood", 7.6);
+INSERT INTO supporting_role (stars_id, movie, rating)
+    VALUES (8, "The Two Popes", 7.6);
+
+
+/*Is there a correlation between age and lead role nomination? */
+SELECT first_name, last_name, STARmeter, birthdate FROM stars
+GROUP BY birthdate
+HAVING birthdate > "1960";
+
+SELECT first_name, last_name, STARmeter, birthdate FROM stars
+GROUP BY birthdate
+HAVING birthdate < "1960";
+
+/*Display actors, what they are nominated for, whether it is a leading or supporting role, and their age given their birthdate */
+SELECT nominated_for, role, id as actor_id, first_name, last_name, STARmeter, (2023 - birthdate) - 1 as age
+FROM (SELECT stars.id, first_name, last_name, leading_role.movie AS nominated_for, STARmeter, birthdate, 'Leading Role' as role
+FROM stars
+JOIN leading_role ON stars.id = leading_role.stars_id
+UNION
+SELECT stars.id, first_name, last_name, supporting_role.movie AS nominated_for, STARmeter, birthdate, 'Supporting Role' as role
+FROM stars
+JOIN supporting_role ON stars.id = supporting_role.stars_id)
+ORDER BY role, nominated_for;

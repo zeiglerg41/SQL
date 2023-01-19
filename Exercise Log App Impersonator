@@ -1,0 +1,80 @@
+/* Create a workout tracker app with RPE scale, notes, etc. */
+CREATE TABLE strength_exercise 
+    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    date TEXT,
+    exercise TEXT,
+    sets INTEGER,
+    reps INTEGER,
+    weight_lbs INTEGER,
+    RPE INTEGER,
+    notes TEXT)
+;
+
+CREATE TABLE cardio_exercise 
+    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    date TEXT,
+    exercise TEXT,
+    duration_min INTEGER,
+    average_HR_BPM INTEGER,
+    RPE INTEGER,
+    notes TEXT)
+;
+
+CREATE TABLE users 
+    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name TEXT,
+    last_name TEXT)
+;
+
+INSERT INTO users (first_name, last_name)
+VALUES 
+    ("Gware", "Zwig"),
+    ("Cog", "Simon"),
+    ("Peggy", "Stout")
+;
+
+INSERT INTO strength_exercise (user_id, date, exercise, sets, reps, weight_lbs, RPE, notes)
+VALUES
+    (1, "01-18-2023", "RFE Split squats", 3, 10, 180, 8, "Went to failure on final set with partial ROM"),
+    (1, "01-18-2023", "SL DB RDL", 3, 10, 80, 8, "Used free arm for stability. Went to failure on final set with partial ROM"),
+    (2, "01-18-2023", "FFE Split squats", 3, 10, 60, 7, "Focused on form and slow ROM"),
+    (3, "01-18-2023", "Leg press", 4, 8, 150, 8, "Switched foot positioning for narrow and wide stances each set."),
+    (3, "01-18-2023", "Chest press", 3, 8, 60, 10, "Attempted to keep elbows in and back against the seat. Felt harder than usual today.")
+;
+
+INSERT INTO cardio_exercise (user_id, date, exercise, duration_min, average_HR_BPM, RPE, notes)
+VALUES
+    (1, "01-18-2023", "Pelaton ride", 35, 153, 8, "High-intensity-Interval session"),
+    (2, "01-18-2023", "Running", 48, 133, 5, "Distance session w/ emphasis on cadence")
+;
+
+/* Add max HR column to cardio table */
+ALTER TABLE cardio_exercise ADD max_HR_BPM INTEGER default "NA";
+
+/*Update existing entry for at least one user */
+UPDATE cardio_exercise 
+SET max_HR_BPM = 148, RPE = 6
+WHERE user_id = 2;
+
+UPDATE cardio_exercise 
+SET max_HR_BPM = 169, RPE = 9
+WHERE user_id = 1;
+
+INSERT INTO cardio_exercise (user_id, date, exercise, duration_min, average_HR_BPM, RPE, notes, max_HR_BPM)
+VALUES (3, "01-19-2023", "Muy Thai", 20, 147, 6, "Heavy bag training. Emphasis on powerful strikes with kicking", 159);
+
+INSERT INTO cardio_exercise (user_id, date, exercise, duration_min, average_HR_BPM, RPE, notes, max_HR_BPM)
+VALUES (2, "01-19-2023", "running", 25, 154, 7, "Tempo runs with minimal rest between sets", 171);
+
+SELECT * FROM cardio_exercise;
+
+SELECT * FROM strength_exercise;
+
+/*Delete an entry from one of the users in the strength table */
+BEGIN TRANSACTION;
+DELETE FROM strength_exercise WHERE exercise LIKE "SL DB RDL";
+COMMIT;
+
+SELECT * FROM strength_exercise;

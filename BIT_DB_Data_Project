@@ -1,0 +1,72 @@
+-- How many orders were placed in January? 
+SELECT COUNT(orderid)
+FROM BIT_DB.JanSales
+WHERE length(orderid) = 6
+AND orderid IS NOT NULL 
+AND orderid <> 'Order ID';
+-- 9681 orders
+
+-- How many of those orders were for an iPhone?
+SELECT COUNT(orderID) FROM BIT_DB.JanSales Jan
+WHERE Jan.orderID IS NOT NULL
+AND length(orderID) = 6
+AND Jan.orderID <> ' '
+AND Jan.Product LIKE 'iPhone';
+-- 379 iphone orders
+
+-- Select the customer account numbers for all the orders that were placed in February.
+SELECT distinct acctnum 
+FROM BIT_DB.customers cust 
+INNER JOIN BIT_DB.FebSales Feb
+ON cust.order_id = Feb.orderID
+WHERE length(Feb.orderID) = 6
+AND Feb.orderID <> 'Order ID';
+--11986 rows
+
+-- Which product was the cheapest one sold in January, and what was the price?
+SELECT product, MIN(price) FROM BIT_DB.JanSales
+WHERE JanSales.orderID IS NOT NULL
+AND JanSales.orderID <> ' '
+GROUP BY product;
+--OR
+SELECT distinct Product, price
+FROM BIT_DB.JanSales
+WHERE  price in (SELECT min(price) FROM BIT_DB.JanSales)
+-- OR
+SELECT product, min(price) 
+FROM BIT_DB.JanSales Jan 
+GROUP BY product, price 
+ORDER BY price ASC
+LIMIT 1;
+-- AAA Batteries (4-pack) for $2.99
+
+-- What is the total revenue for each product sold in January? (Revenue can be calculated using the number of products sold and the price of the products).
+SELECT SUM(quantity) * price AS revenue, product 
+FROM BIT_DB.JanSales Jan
+WHERE Jan.orderID IS NOT NULL
+AND length(Jan.orderID) = 6
+AND Jan.orderID <> ' '
+GROUP BY product;
+
+-- Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each were sold, and what was the total revenue?
+SELECT Product, SUM(Quantity), SUM(Quantity*price) 
+FROM BIT_DB.FebSales Feb
+WHERE Feb.location = '548 Lincoln St, Seattle, WA 98101'
+GROUP BY Product;
+
+-- How many customers ordered more than 2 products at a time in February, and what was the average amount spent for those customers?
+SELECT COUNT(Cust.order_id), AVG(Feb.Quantity * Feb.price) 
+FROM BIT_DB.customers Cust
+LEFT JOIN  BIT_DB.FebSales Feb
+ON Cust.order_id = Feb.orderID
+WHERE Feb.Quantity > 2
+AND Feb.orderID IS NOT NULL
+AND Feb.orderID <> ' ';
+-- OR
+SELECT COUNT(Cust.acctnum), AVG(Feb.Quantity * Feb.price) 
+FROM BIT_DB.customers Cust
+LEFT JOIN  BIT_DB.FebSales Feb
+ON Cust.order_id = Feb.orderID
+WHERE Feb.Quantity > 2
+AND Feb.orderID IS NOT NULL
+AND Feb.orderID <> ' ';

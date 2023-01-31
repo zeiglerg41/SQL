@@ -1,3 +1,5 @@
+-- In this SQL, I'm querying a database with multiple tables in it to quantify statistics about customer and order data. 
+
 -- How many orders were placed in January? 
 SELECT COUNT(orderid)
 FROM BIT_DB.JanSales
@@ -21,7 +23,6 @@ INNER JOIN BIT_DB.FebSales Feb
 ON cust.order_id = Feb.orderID
 WHERE length(Feb.orderID) = 6
 AND Feb.orderID <> 'Order ID';
---11986 rows
 
 -- Which product was the cheapest one sold in January, and what was the price?
 SELECT product, MIN(price) FROM BIT_DB.JanSales

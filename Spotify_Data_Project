@@ -1,0 +1,58 @@
+CREATE TABLE BIT_DB.Spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+song_key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+song_mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness text NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL );
+
+SELECT * 
+FROM BIT_DB.Spotifydata;
+
+-- What is the average danceability by artist and track? 
+Select artist_name, AVG(danceability) 
+from BIT_DB.Spotifydata
+group by artist_name
+order by AVG(danceability);
+
+-- Who are the top 10 artists based on popularity? 
+select artist_name, popularity 
+from BIT_DB.Spotifydata
+order by popularity desc
+limit 10;
+
+-- What artist released the longest song? 
+select artist_name, track_name, MAX(duration_ms) from BIT_DB.Spotifydata
+order by duration_ms
+limit 1;
+
+-- What's the average danceability for the 10 most popular songs?
+select track_name, artist_name, popularity, AVG(danceability)
+from BIT_DB.Spotifydata
+group by track_name
+order by popularity desc
+limit 10;
+
+-- Which track has the highest energy score and what is the score?
+select track_name, energy
+from BIT_DB.Spotifydata
+order by energy desc
+limit 1;
+
+-- Which tracks have a song_mode of 0(minor key) and a valence score of above 0.5 (positive mood)?
+
+
+--What is the average "tempo" for tracks with a "time_signature" of 4(common time)?
+

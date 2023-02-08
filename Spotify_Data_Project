@@ -1,3 +1,7 @@
+# For this project, I downloaded Spotify data from Kaggle.
+# Then I created a table to insert Spotify data into.
+# Finally, I performed analytics on the data using SQLite.
+
 CREATE TABLE BIT_DB.Spotifydata (
 id integer PRIMARY KEY,
 artist_name varchar NOT NULL,
@@ -34,7 +38,8 @@ order by popularity desc
 limit 10;
 
 -- What artist released the longest song? 
-select artist_name, track_name, MAX(duration_ms) from BIT_DB.Spotifydata
+select artist_name, track_name, MAX(duration_ms) 
+from BIT_DB.Spotifydata
 order by duration_ms
 limit 1;
 
@@ -52,7 +57,12 @@ order by energy desc
 limit 1;
 
 -- Which tracks have a song_mode of 0(minor key) and a valence score of above 0.5 (positive mood)?
-
+select track_name, song_mode, valence
+from BIT_DB.Spotifydata
+where song_mode = 0
+and valence > 0.5;
 
 --What is the average "tempo" for tracks with a "time_signature" of 4(common time)?
-
+select count(*) as num_of_tracks, round(avg(tempo),3) as avg_tempo, time_signature ts
+from BIT_DB.Spotifydata
+where ts = 4;

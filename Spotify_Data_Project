@@ -66,3 +66,17 @@ and valence > 0.5;
 select count(*) as num_of_tracks, round(avg(tempo),3) as avg_tempo, time_signature ts
 from BIT_DB.Spotifydata
 where ts = 4;
+
+--What are the 'Top Star' artists that have an average popularity of 90 or above and what is the avg popularity for each of those artists?
+with avg_popularity_CTE as (
+select s.artist_name, 
+    round(avg(s.popularity)) as avg_pop
+from SpotifyData as s
+group by s.artist_name
+)
+select artist_name,
+    avg_pop,
+    'Top Star' as tag
+from avg_popularity_CTE
+where avg_pop>=90
+order by avg_pop desc;

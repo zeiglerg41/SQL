@@ -1,0 +1,112 @@
+-- This project includes data from Chinook Database including data relevant to employee info and sales info
+
+select * from chinook.customers;
+--Show Customers (their full names, customer ID, and country) who are not in the US. (Hint: != or <> can be used to say "is not equal to").
+select CustomerID, FirstName || ' ' || LastName as FullName, Country from chinook.customers 
+where country != "USA";
+
+--Show only the Customers from Brazil.
+select CustomerID, FirstName || ' ' || LastName as FullName, Country from chinook.customers 
+where country like "%Brazil%";
+
+--Find the Invoices of customers who are from Brazil. 
+--The resulting table should show the customer's full name, Invoice ID, Date of the invoice, 
+--and billing country.
+select c.CustomerID, c.FirstName || ' ' || LastName as FullName,
+    i.BillingCountry,
+    i.InvoiceId,
+    i.InvoiceDate
+from chinook.customers c
+join chinook.invoices i
+on c.CustomerId = i.CustomerId
+where country like "%Brazil%";
+
+--Show the Employees who are Sales Agents and who they report to.
+select 
+    EmployeeId, 
+    FirstName || ' ' || LastName as FullName, 
+    Title,
+    (select FirstName || ' ' || LastName from employees where EmployeeId = 2) as ReportsTo
+from employees
+where Title like "%Sales%Agent%";
+
+
+--Find a unique/distinct list of billing countries from the Invoice table.
+select distinct BillingCountry
+from invoices;
+
+--Find the countries that generate the most invoices.
+select BillingCountry, 
+  COUNT(*) as InvoiceCount 
+from invoices 
+group by BillingCountry
+having InvoiceCount > 6
+order by InvoiceCount desc
+limit 20;
+
+--Provide a query that shows the invoices associated with each sales agent. 
+--The resulting table should include the Sales Agent's full name.
+select e.FirstName || ' ' || e.LastName as FullName,
+    i.InvoiceId
+from chinook.employees e
+join chinook.customers c on e.EmployeeId = c.SupportRepId
+join chinook.invoices i on c.CustomerId = i.CustomerId;
+
+--Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.
+select i.Total as InvoiceTotal,
+    e.FirstName || ' ' || e.LastName as SalesAgent,
+    c.FirstName || ' ' || c.LastName as CustomerName,
+    c.Country as CutsomerCountry
+from chinook.employees e
+join chinook.customers c on e.EmployeeId = c.SupportRepId
+join chinook.invoices i on c.CustomerId = i.CustomerId
+where Title like "%Sales%Agent%"
+order by SalesAgent;
+
+--How many Invoices were there in 2009?
+select count(*) 
+from chinook.invoices
+where InvoiceDate between '2009-01-01' and '2009-12-31';
+
+--What are the total sales for 2009?
+select round(sum(Total),2) as TotalSales2009
+from chinook.invoices
+where InvoiceDate like '%2009%';
+
+--Write a query that includes the purchased track name with each invoice line ID.
+select t.Name, 
+    ii.InvoiceLineId
+from chinook.invoice_items ii
+join chinook.tracks t on ii.TrackId = t.TrackId
+order by ii.InvoiceLineId;
+
+--Write a query that includes the purchased track name AND artist name 
+--with each invoice line ID.
+select ii.InvoiceLineId,
+    t.Name as Trackname,
+    a.Name as ArtistName
+from chinook.invoice_items ii
+left join chinook.tracks t on ii.TrackId = t.TrackId
+inner join chinook.albums al on t.AlbumId = al.AlbumId
+left join chinook.artists a on al.ArtistId = a.ArtistId
+order by a.Name;
+
+--Show the total sales made by each sales agent.
+select e.FirstName || ' ' || e.LastName as SalesAgent,
+    round(sum(i.total), 2)
+from chinook.employees e
+join chinook.customers c on e.EmployeeId = c.SupportRepId
+join chinook.invoices i on c.CustomerId = i.CustomerId
+where e.Title like '%Sales%Agent%'
+group by SalesAgent;
+
+--Which sales agent made the most dollars in sales in 2009?
+select e.FirstName || ' ' || e.LastName as SalesAgent,
+    round(sum(i.total), 2) as TotalSales2009
+from chinook.employees e
+join chinook.customers c on e.EmployeeId = c.SupportRepId
+join chinook.invoices i on c.CustomerId = i.CustomerId
+where e.Title like '%Sales%Agent%' and i.InvoiceDate like '%2009%'
+group by SalesAgent
+order by TotalSales2009 desc
+limit 1;

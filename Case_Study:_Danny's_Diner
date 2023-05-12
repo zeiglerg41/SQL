@@ -4,7 +4,7 @@
    
 -- 1. What is the total amount each customer spent at the restaurant?
 SELECT
-	sum(menu.price) total_spent,
+    sum(menu.price) total_spent,
     sales.customer_id customer
 FROM dannys_diner.sales sales
 JOIN dannys_diner.menu menu
@@ -14,14 +14,15 @@ ORDER BY total_spent DESC;
 
 -- 2. How many days has each customer visited the restaurant?
 SELECT
-	COUNT(DISTINCT(sales.order_date)) days_visited,
+    COUNT(DISTINCT(sales.order_date)) days_visited,
     sales.customer_id customer
 FROM dannys_diner.sales sales
 GROUP BY customer
 ORDER BY days_visited;
+
 -- 3. What was the first item from the menu purchased by each customer?
 SELECT 
-	sales.customer_id,
+    sales.customer_id,
     MIN(sales.order_date) ,
     sales.product_id
 FROM dannys_diner.sales sales
@@ -29,10 +30,12 @@ GROUP BY sales.customer_id, sales.product_id
 ORDER BY sales.order_date;
 	
     	
-   /*(SELECT menu.product_name product,
+SELECT 
+   menu.product_name product,
    MIN(DATE( Limit 1)
-     FROM dannys_diner.menu
-	 ORDER BY product ASC LIMIT 1) first_item_purchased */
+FROM dannys_diner.menu
+ORDER BY product ASC LIMIT 1) first_item_purchased;
+	 
 -- 4. What is the most purchased item on the menu and how many times was it purchased by all customers?
 SELECT
     menu.product_name,
@@ -64,40 +67,40 @@ HAVING COUNT(*) = (
 -- 6. Which item was purchased first by the customer after they became a member?
 WITH first_purchase_after_membership AS (
 SELECT
-	m.customer_id,
-	MIN(s.order_date) AS first_purchase_date
+    m.customer_id,
+    MIN(s.order_date) AS first_purchase_date
 FROM dannys_diner.members m
 JOIN dannys_diner.sales s ON m.customer_id = s.customer_id
 WHERE s.order_date >= m.join_date
 GROUP BY m.customer_id
 )
 SELECT
-fpam.customer_id,
-s.product_id
+    fpam.customer_id,
+    s.product_id
 FROM first_purchase_after_membership fpam
 JOIN dannys_diner.sales s ON fpam.customer_id = s.customer_id AND fpam.first_purchase_date = s.order_date;
 
 -- 7. Which item was purchased just before the customer became a member?
 WITH last_purchase_before_membership AS (
 SELECT
-	m.customer_id,
-	MAX(s.order_date) AS last_purchase_date
+    m.customer_id,
+    MAX(s.order_date) AS last_purchase_date
 FROM dannys_diner.members m
 JOIN dannys_diner.sales s ON m.customer_id = s.customer_id
 WHERE s.order_date < m.join_date
 GROUP BY m.customer_id
 )
 SELECT
-lpbm.customer_id,
-s.product_id
+    lpbm.customer_id,
+    s.product_id
 FROM last_purchase_before_membership lpbm
 JOIN dannys_diner.sales s ON lpbm.customer_id = s.customer_id AND lpbm.last_purchase_date = s.order_date;
 
 -- 8. What is the total items and amount spent for each member before they became a member?
 SELECT
-	m.customer_id,
-	COUNT(s.product_id) AS total_items,
-	SUM(menu.price) AS amount_spent
+    m.customer_id,
+    COUNT(s.product_id) AS total_items,
+    SUM(menu.price) AS amount_spent
 FROM dannys_diner.members m
 JOIN dannys_diner.sales s ON m.customer_id = s.customer_id
 JOIN dannys_diner.menu menu ON s.product_id = menu.product_id
@@ -106,11 +109,11 @@ GROUP BY m.customer_id;
 
 -- 9.  If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
 SELECT
-	s.customer_id,
-	SUM(CASE
-		WHEN menu.product_name = 'sushi' THEN menu.price * 20
-		ELSE menu.price * 10
-	END) AS points
+    s.customer_id,
+    SUM(CASE
+WHEN menu.product_name = 'sushi' THEN menu.price * 20
+    ELSE menu.price * 10
+END) AS points
 FROM dannys_diner.sales s
 JOIN dannys_diner.menu menu ON s.product_id = menu.product_id
 GROUP BY s.customer_id;
